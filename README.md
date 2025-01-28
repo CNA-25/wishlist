@@ -89,8 +89,8 @@ Database Schema
 
 CREATE TABLE wishlist (
     id SERIAL PRIMARY KEY,
-    user_id UUID NOT NULL,
-    product_id UUID NOT NULL,
+    user_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT unique_user_product UNIQUE (user_id, product_id)
 );
