@@ -1,91 +1,70 @@
-Wishlist Service
+# Wishlist Service
 
-Features
+# Features
 
-Add a product to the wishlist
+- Add a product to the wishlist
+- Remove a product from the wishlist
+- Retrieve a user's wishlist
+- Prevent duplicate wishlist entries
 
-Remove a product from the wishlist
+# Tech Stack
+- Backend: FastAPI
+- Database: PostgreSQL
+- ORM: SQLAlchemy
 
-Retrieve a user's wishlist
+# Installation & Setup
 
-Prevent duplicate wishlist entries
+# Clone the Repository
 
-Tech Stack
+- git clone https://github.com/your-repo/wishlist-service.git
 
-Backend: FastAPI
+# Install Dependencies
 
-Database: PostgreSQL
+- pip install -r requirements.txt
 
-ORM: SQLAlchemy
+# Configure Database
+- Update .env with your PostgreSQL credentials:
+- DATABASE_URL=postgresql://user:password@localhost:5432/wishlist_db
 
-Installation & Setup
+# Start the FastAPI Server
+- uvicorn main:app --reload
 
-Clone the Repository
-
-git clone https://github.com/your-repo/wishlist-service.git
-cd wishlist-service
-
-Install Dependencies
-
-pip install -r requirements.txt
-
-Configure Database
-
-Update .env with your PostgreSQL credentials:
-
-DATABASE_URL=postgresql://user:password@localhost:5432/wishlist_db
-
-Start the FastAPI Server
-
-uvicorn main:app --reload
-
-API Endpoints
-
-Add Product to Wishlist
-
-POST /wishlist/
-
-Request Body:
+#  API Endpoints
+- Add Product to Wishlist
+- POST /wishlist/
+- Request Body:
 
 {
     "user_id": "123",
     "product_id": "456"
 }
-
 Response:
-
 {
     "message": "Product added to wishlist"
 }
 
-Get User's Wishlist
-
-GET /wishlist/{user_id}
-
+# Get User's Wishlist
+- GET /wishlist/{user_id}
 Response:
 
 [
     {"product_id": "456", "name": "Product Name", "price": 59.99}
 ]
 
-Remove Product from Wishlist
-
-DELETE /wishlist/
-
+# Remove Product from Wishlist
+- DELETE /wishlist/
 Request Body:
 
 {
     "user_id": "123",
     "product_id": "456"
 }
-
 Response:
-
 {
     "message": "Product removed from wishlist"
 }
 
-Database Schema
+# Database Schema
 
 CREATE TABLE wishlist (
     id SERIAL PRIMARY KEY,
