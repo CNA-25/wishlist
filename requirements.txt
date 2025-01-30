@@ -1,2 +1,5 @@
 fastapi[standard]
 pydantic
+sqlalchemy 
+psycopg2
+dotenv
