@@ -24,6 +24,7 @@ Base = declarative_base()
 
 class Wishlist(Base):
     __tablename__ = 'wishlist'
+    id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, index=True)
     sku = Column(String, index=True, unique=True)
     name = Column(String)
