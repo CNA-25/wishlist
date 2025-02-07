@@ -1,18 +1,18 @@
 GET https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/2
 
-
 ###
 POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
 Content-Type: application/json
 
 {
-    "user_id": 6,
-    "sku": "555-XYZ",
-    "name": "Wheat Beer", 
-    "price": 59.99,
-    "description": "En fruktig och kryddig veteöl med en mjuk munkänsla."
+    "user_id": 2,
+    "sku": "123-ABC",
+    "name": "Lager", 
+    "price": 55.99,
+    "description": "En ljus och frisk lager med balanserad smak."
 }
 
-
+###
+DELETE https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/2/123-ABC
 
 
