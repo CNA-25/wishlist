@@ -4,7 +4,7 @@ WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt
 
-COPY .env /code/.env
+COPY .env
 
 
 RUN pip install --upgrade pip
