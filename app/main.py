@@ -70,15 +70,26 @@ async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db)):
         stmt = select(Wishlist).filter(Wishlist.user_id == user_id)
         result = await db.execute(stmt)
         wishlist_items = result.scalars().all()
-        return {"wishlist": [{"user_id": item.user_id, "product_id": item.product_id} for item in wishlist_items]}
+        return {
+            "wishlist": [
+                {
+                    "user_id": item.user_id,
+                    "sku": item.sku,
+                    "name": item.name,
+                    "price": item.price,
+                    "description": item.description
+                }
+                for item in wishlist_items
+            ]
+        }
     except Exception as e:
-        (f"Error: {e}")
+        print(f"Error: {e}")
         raise HTTPException(status_code=400, detail=f"Error: {e}")
     
-@app.delete("/wishlist/{user_id}/{product_id}")
-async def remove_from_wishlist(user_id: int, product_id: int, db: AsyncSession = Depends(get_db)):
+@app.delete("/wishlist/{user_id}/{sku}")
+async def remove_from_wishlist(user_id: int, sku: str, db: AsyncSession = Depends(get_db)):
     try:
-        stmt = select(Wishlist).filter(Wishlist.user_id == user_id, Wishlist.product_id == product_id)
+        stmt = select(Wishlist).filter(Wishlist.user_id == user_id, Wishlist.sku == sku)
         result = await db.execute(stmt)
         wishlist_item = result.scalar_one_or_none()
         if not wishlist_item:
@@ -88,5 +99,5 @@ async def remove_from_wishlist(user_id: int, product_id: int, db: AsyncSession =
         return {"message": "Product removed from wishlist successfully."}
     except Exception as e:
         await db.rollback()
-        (f"Error: {e}")
+        print(f"Error: {e}")
         raise HTTPException(status_code=400, detail=f"Error: {e}")

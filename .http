@@ -6,9 +6,13 @@ POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
 Content-Type: application/json
 
 {
-    "user_id": 1,
-    "sku": "789-GHI",
-    "name": "IPA", 
-    "price": 64.99,
-    "description": "En kraftig och humlearomatisk IPA."
+    "user_id": 6,
+    "sku": "555-XYZ",
+    "name": "Wheat Beer", 
+    "price": 59.99,
+    "description": "En fruktig och kryddig veteöl med en mjuk munkänsla."
 }
+
+
+
+
