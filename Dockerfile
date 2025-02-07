@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 COPY ./app /code/app
 
 # This can be overridden in .env if declared in docker-compose
-ENV MODE=development
+ENV MODE=production
 
 
 # Set MODE=development in .env when run locally to listen for changes
