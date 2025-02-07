@@ -6,7 +6,7 @@ uvicorn[standard]
 
 sqlalchemy
 
-asyncpg-binary
+asyncpg
 
 psycopg2-binary
 
