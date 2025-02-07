@@ -23,8 +23,7 @@ app = FastAPI()
 Base = declarative_base()
 
 class Wishlist(Base):
-   __tablename__ = 'wishlist'
-   
+    __tablename__ = 'wishlist'
     user_id = Column(Integer, index=True)
     sku = Column(String, index=True, unique=True)
     name = Column(String)
