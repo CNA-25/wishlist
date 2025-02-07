@@ -1,0 +1,14 @@
+GET https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/2
+
+
+###
+POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
+Content-Type: application/json
+
+{
+    "user_id": 1,
+    "sku": "789-GHI",
+    "name": "IPA", 
+    "price": 64.99,
+    "description": "En kraftig och humlearomatisk IPA."
+}

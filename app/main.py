@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
-from sqlalchemy import create_engine, Column, Integer
+from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.future import select
@@ -23,10 +23,13 @@ app = FastAPI()
 Base = declarative_base()
 
 class Wishlist(Base):
-    __tablename__ = "wishlist"
-    user_id = Column(Integer, primary_key=True, index=True)
-    product_id = Column(Integer, primary_key=True, index=True)
-
+   __tablename__ = 'wishlist'
+   
+    user_id = Column(Integer, index=True)
+    sku = Column(String, index=True, unique=True)
+    name = Column(String)
+    price = Column(Float)
+    description = Column(String)
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
@@ -36,23 +39,29 @@ async def get_db():
 
 class WishlistItem(BaseModel):
     user_id: int
-    product_id: int
+    sku: str
+    name: str
+    price: float
+    description: str
 
 @app.post("/wishlist/")
 async def add_to_wishlist(item: WishlistItem, db: AsyncSession = Depends(get_db)):
     try:
-        new_item = Wishlist(user_id=item.user_id, product_id=item.product_id)
+        new_item = Wishlist(
+            user_id=item.user_id,
+            sku=item.sku,
+            name=item.name,
+            price=item.price,
+            description=item.description,
+        )
         db.add(new_item)
         await db.commit()
-        (f"Added item to wishlist: {item}")
         return {"message": "Product added to wishlist successfully."}
     except IntegrityError:
-        await db.rollback() 
-        (f"Error: Item already exists in wishlist. User ID: {item.user_id}, Product ID: {item.product_id}")
+        await db.rollback()
         raise HTTPException(status_code=400, detail="Item already exists in the wishlist.")
     except Exception as e:
         await db.rollback()
-        (f"Error: {e}")
         raise HTTPException(status_code=400, detail=f"Error: {e}")
 
 @app.get("/wishlist/{user_id}")
