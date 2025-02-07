@@ -11,8 +11,6 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-load_dotenv("./code/.env")
-
 DB_USER = os.getenv("DB_USER")
 DB_PWD = os.getenv("DB_PWD")
 DB_HOST = os.getenv("DB_HOST")
