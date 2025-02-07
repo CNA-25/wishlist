@@ -10,7 +10,7 @@
 - Prevent duplicate wishlist entries
 
 # Tech Stack
-- Backend: FastAPI
+- Backend: FastAPI (Use /docs in endpoint for api documentation)
 - Database: PostgreSQL
 - ORM: SQLAlchemy
 
@@ -18,7 +18,7 @@
 
 # Clone the Repository
 
-- git clone https://github.com/your-repo/wishlist-service.git
+- git clone https://github.com/CNA-25/wishlist
 
 # Install Dependencies
 
@@ -33,12 +33,15 @@
 
 #  API Endpoints
 - Add Product to Wishlist
-- POST /wishlist/
-- Request Body:
+POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
+Content-Type: application/json
 
 {
-    "user_id": "123",
-    "product_id": "456"
+    "user_id": 2,
+    "sku": "123-ABC",
+    "name": "Lager", 
+    "price": 55.99,
+    "description": "En ljus och frisk lager med balanserad smak."
 }
 Response:
 {
@@ -50,17 +53,18 @@ Response:
 Response:
 
 [
-    {"product_id": "456", "name": "Product Name", "price": 59.99}
+    {
+      "user_id": 2,
+      "sku": "123-ABC",
+      "name": "Lager",
+      "price": 55.99,
+      "description": "En ljus och frisk lager med balanserad smak."
+    }
 ]
 
 # Remove Product from Wishlist
-- DELETE /wishlist/
-Request Body:
+- DELETE https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/{user_id}/{sku}
 
-{
-    "user_id": "123",
-    "product_id": "456"
-}
 Response:
 {
     "message": "Product removed from wishlist"
@@ -69,11 +73,13 @@ Response:
 # Database Schema
 
 CREATE TABLE wishlist (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    product_id INTEGER NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT unique_user_product UNIQUE (user_id, product_id)
+id SERIAL PRIMARY KEY,
+user_id INT NOT NULL,
+sku VARCHAR(50) UNIQUE NOT NULL,
+name TEXT NOT NULL,
+price DECIMAL(10,2) NOT NULL,
+description TEXT,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 >>>>>>> 171655fa63cd125d5706fd7c45083e278f64d499
 
