@@ -1,5 +1,6 @@
 GET https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/2
 
+
 ###
 POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
 Content-Type: application/json

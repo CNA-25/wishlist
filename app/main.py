@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Header
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
+from jose import jwt, ExpiredSignatureError, JWTError
 import os
 load_dotenv()
 
@@ -21,6 +22,20 @@ DB_NAME = os.getenv("DB_NAME")
 SQLALCHEMY_DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PWD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 app = FastAPI()
 Base = declarative_base()
+
+#Auth
+
+ALGORITHM = "HS256"
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+def verify_jwt_token(token: str = Header(...)):
+    try:
+        payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=[ALGORITHM])
+        return payload
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=403, detail="Token has expired")
+    except JWTError:
+        raise HTTPException(status_code=403, detail="Invalid token")
 
 class Wishlist(Base):
     __tablename__ = 'wishlist'
@@ -45,7 +60,7 @@ class WishlistItem(BaseModel):
     description: str
 
 @app.post("/wishlist/")
-async def add_to_wishlist(item: WishlistItem, db: AsyncSession = Depends(get_db)):
+async def add_to_wishlist(item: WishlistItem, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
         new_item = Wishlist(
             user_id=item.user_id,
@@ -56,6 +71,7 @@ async def add_to_wishlist(item: WishlistItem, db: AsyncSession = Depends(get_db)
         )
         db.add(new_item)
         await db.commit()
+        await db.refresh(new_item)
         return {"message": "Product added to wishlist successfully."}
     except IntegrityError:
         await db.rollback()
@@ -65,7 +81,7 @@ async def add_to_wishlist(item: WishlistItem, db: AsyncSession = Depends(get_db)
         raise HTTPException(status_code=400, detail=f"Error: {e}")
 
 @app.get("/wishlist/{user_id}")
-async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db)):
+async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
         stmt = select(Wishlist).filter(Wishlist.user_id == user_id)
         result = await db.execute(stmt)
@@ -87,7 +103,7 @@ async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=400, detail=f"Error: {e}")
     
 @app.delete("/wishlist/{user_id}/{sku}")
-async def remove_from_wishlist(user_id: int, sku: str, db: AsyncSession = Depends(get_db)):
+async def remove_from_wishlist(user_id: int, sku: str, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
         stmt = select(Wishlist).filter(Wishlist.user_id == user_id, Wishlist.sku == sku)
         result = await db.execute(stmt)
