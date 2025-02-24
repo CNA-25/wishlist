@@ -1,4 +1,6 @@
 GET https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/2
+Authorization: Bearer ab3e05499dca3a5f98be1e0b5fcd56c7d7587588dda43b72
+Content-Type: application/json
 
 
 ###
@@ -8,7 +10,7 @@ Authorization: Bearer ab3e05499dca3a5f98be1e0b5fcd56c7d7587588dda43b72
 
 {
     "user_id": 2,
-    "sku": "123-ABC",
+    "sku": "122-ABC",
     "name": "Lager", 
     "price": 55.99,
     "description": "En ljus och frisk lager med balanserad smak."

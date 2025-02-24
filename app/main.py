@@ -28,10 +28,15 @@ Base = declarative_base()
 ALGORITHM = "HS256"
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-def verify_jwt_token(token: str = Header(...)):
+def verify_jwt_token(authorization: str = Header(...)):
     try:
-        payload = jwt.decode(token, os.getenv('SECRET_KEY'), algorithms=[ALGORITHM])
+        if not authorization:
+            raise HTTPException(status_code=403, detail="Authorization header missing.")
+        token = authorization.split(" ")[1]
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
+    except IndexError:
+        raise HTTPException(status_code=403, detail="Invalid authorization header format.")
     except ExpiredSignatureError:
         raise HTTPException(status_code=403, detail="Token has expired")
     except JWTError:
