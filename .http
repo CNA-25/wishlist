@@ -4,6 +4,7 @@ GET https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/2
 ###
 POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
 Content-Type: application/json
+Authorization: Bearer ab3e05499dca3a5f98be1e0b5fcd56c7d7587588dda43b72
 
 {
     "user_id": 2,
