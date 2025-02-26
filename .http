@@ -3,17 +3,8 @@ Authorization: Bearer <token>
 
 
 ###
-POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
-Content-Type: application/json
-Authorization: Bearer <token>
+POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/123-ABC
 
-{
-    "user_id": 2,
-    "sku": "122-ABC",
-    "name": "Lager", 
-    "price": 55.99,
-    "description": "En ljus och frisk lager med balanserad smak."
-}
 
 ###
 DELETE https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/2/123-ABC
