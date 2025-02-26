@@ -29,7 +29,7 @@
 - DATABASE_URL=postgresql://user:password@localhost:5432/wishlist_db
 
 # Start the FastAPI Server
-- uvicorn main:app --reload
+- uvicorn app.main:app --reload
 
 #  API Endpoints
 - Add Product to Wishlist
