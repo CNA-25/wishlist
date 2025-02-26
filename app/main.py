@@ -25,14 +25,15 @@ Base = declarative_base()
 
 #Auth
 
+ALGORITHM = "HS256"
 SECRET_KEY = os.getenv("SECRET_KEY")
-
+#verify and decode JWT
 def verify_jwt_token(authorization: str = Header(...)):
     try:
         if not authorization:
             raise HTTPException(status_code=403, detail="Authorization header missing.")
         token = authorization.split(" ")[1]
-        payload = jwt.decode(token, SECRET_KEY)
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except IndexError:
         raise HTTPException(status_code=403, detail="Invalid authorization header format.")
@@ -41,6 +42,7 @@ def verify_jwt_token(authorization: str = Header(...)):
     except JWTError:
         raise HTTPException(status_code=403, detail="Invalid token")
 
+#
 class Wishlist(Base):
     __tablename__ = 'wishlist'
     id = Column(Integer, primary_key=True, index=True)
@@ -57,12 +59,15 @@ class WishlistItem(BaseModel):
     user_id: int
     sku: str
 
-@app.post("/wishlist/")
-async def add_to_wishlist(item: WishlistItem, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
+#add one item to the JWT users wishlist
+#the only part of the JWT token we care about is the sub (user id)
+@app.post("/wishlist/{sku}")
+async def add_to_wishlist(sku: str, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
+        #user.get("sub") is the users id.
         new_item = Wishlist(
-            user_id=item.user_id,
-            sku=item.sku
+            user_id=user.get("sub"),
+            sku=sku
         )
         db.add(new_item)
         await db.commit()
@@ -75,6 +80,7 @@ async def add_to_wishlist(item: WishlistItem, db: AsyncSession = Depends(get_db)
         await db.rollback()
         raise HTTPException(status_code=400, detail=f"Error: {e}")
 
+#question: should you be able to browse other users wishlist? this code allows for that.
 @app.get("/wishlist/{user_id}")
 async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
@@ -93,11 +99,13 @@ async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db), user: d
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(status_code=400, detail=f"Error: {e}")
-    
-@app.delete("/wishlist/{user_id}/{sku}")
-async def remove_from_wishlist(user_id: int, sku: str, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
+
+#remove one product from the JWT logged users wishlist.
+@app.delete("/wishlist/{sku}")
+async def remove_from_wishlist(sku: str, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
-        stmt = select(Wishlist).filter(Wishlist.user_id == user_id, Wishlist.sku == sku)
+        #find the specific item in the list, that Also has a matching user id
+        stmt = select(Wishlist).filter(Wishlist.user_id == user.get("sub"), Wishlist.sku == sku)
         result = await db.execute(stmt)
         wishlist_item = result.scalar_one_or_none()
         if not wishlist_item:
