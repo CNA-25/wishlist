@@ -4,9 +4,9 @@ Authorization: Bearer <token>
 
 ###
 POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/123-ABC
-
+Authorization: Bearer <token>
 
 ###
 DELETE https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/2/123-ABC
-
+Authorization: Bearer <token>
 
