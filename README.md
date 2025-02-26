@@ -32,16 +32,13 @@
 - uvicorn app.main:app --reload
 
 #  API Endpoints
-- Add Product to Wishlist
-POST https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
+- Add Product to JWT token ID Wishlist
+POST /wishlist/{sku}
 Content-Type: application/json
 
 {
     "user_id": 2,
-    "sku": "123-ABC",
-    "name": "Lager", 
-    "price": 55.99,
-    "description": "En ljus och frisk lager med balanserad smak."
+    "sku": "123-ABC"
 }
 Response:
 {
@@ -55,15 +52,12 @@ Response:
 [
     {
       "user_id": 2,
-      "sku": "123-ABC",
-      "name": "Lager",
-      "price": 55.99,
-      "description": "En ljus och frisk lager med balanserad smak."
+      "sku": "123-ABC"
     }
 ]
 
-# Remove Product from Wishlist
-- DELETE https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/{user_id}/{sku}
+# Remove Product from JWT token ID Wishlist
+- DELETE /wishlist/{sku}
 
 Response:
 {
@@ -75,10 +69,7 @@ Response:
 CREATE TABLE wishlist (
 id SERIAL PRIMARY KEY,
 user_id INT NOT NULL,
-sku VARCHAR(50) UNIQUE NOT NULL,
-name TEXT NOT NULL,
-price DECIMAL(10,2) NOT NULL,
-description TEXT,
+sku VARCHAR(50) NOT NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 >>>>>>> 171655fa63cd125d5706fd7c45083e278f64d499
