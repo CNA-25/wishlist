@@ -25,7 +25,6 @@ Base = declarative_base()
 
 #Auth
 
-ALGORITHM = "HS256"
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 def verify_jwt_token(authorization: str = Header(...)):
@@ -33,7 +32,7 @@ def verify_jwt_token(authorization: str = Header(...)):
         if not authorization:
             raise HTTPException(status_code=403, detail="Authorization header missing.")
         token = authorization.split(" ")[1]
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY)
         return payload
     except IndexError:
         raise HTTPException(status_code=403, detail="Invalid authorization header format.")
@@ -46,10 +45,7 @@ class Wishlist(Base):
     __tablename__ = 'wishlist'
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, index=True)
-    sku = Column(String, index=True, unique=True)
-    name = Column(String)
-    price = Column(Float)
-    description = Column(String)
+    sku = Column(String, index=True)
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
@@ -60,19 +56,13 @@ async def get_db():
 class WishlistItem(BaseModel):
     user_id: int
     sku: str
-    name: str
-    price: float
-    description: str
 
 @app.post("/wishlist/")
 async def add_to_wishlist(item: WishlistItem, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
         new_item = Wishlist(
             user_id=item.user_id,
-            sku=item.sku,
-            name=item.name,
-            price=item.price,
-            description=item.description,
+            sku=item.sku
         )
         db.add(new_item)
         await db.commit()
@@ -95,10 +85,7 @@ async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db), user: d
             "wishlist": [
                 {
                     "user_id": item.user_id,
-                    "sku": item.sku,
-                    "name": item.name,
-                    "price": item.price,
-                    "description": item.description
+                    "sku": item.sku
                 }
                 for item in wishlist_items
             ]
