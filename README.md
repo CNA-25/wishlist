@@ -36,7 +36,6 @@ https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
 
 - Add Product to JWT token ID Wishlist
 POST /wishlist/{sku}
-Content-Type: application/json
 
 Response:
 {
