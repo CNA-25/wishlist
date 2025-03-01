@@ -32,14 +32,12 @@
 - uvicorn app.main:app --reload
 
 #  API Endpoints
+https://wishlist-git-wishlist.2.rahtiapp.fi/wishlist/
+
 - Add Product to JWT token ID Wishlist
 POST /wishlist/{sku}
 Content-Type: application/json
 
-{
-    "user_id": 2,
-    "sku": "123-ABC"
-}
 Response:
 {
     "message": "Product added to wishlist"
