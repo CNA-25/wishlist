@@ -66,7 +66,7 @@ async def add_to_wishlist(sku: str, db: AsyncSession = Depends(get_db), user: di
     try:
         #user.get("sub") is the users id.
         new_item = Wishlist(
-            user_id=user.get("sub"),
+            user_id=int(user.get("sub")),
             sku=sku
         )
         db.add(new_item)
@@ -105,7 +105,7 @@ async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db), user: d
 async def remove_from_wishlist(sku: str, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
         #find the specific item in the list, that Also has a matching user id
-        stmt = select(Wishlist).filter(Wishlist.user_id == user.get("sub"), Wishlist.sku == sku)
+        stmt = select(Wishlist).filter(Wishlist.user_id == int(user.get("sub")), Wishlist.sku == sku)
         result = await db.execute(stmt)
         wishlist_item = result.scalar_one_or_none()
         if not wishlist_item:
