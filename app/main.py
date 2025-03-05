@@ -8,9 +8,22 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt, ExpiredSignatureError, JWTError
 import os
 load_dotenv()
+
+origins = ["https://store-frontend-git-cna-25-store-frontend.2.rahtiapp.fi/"]
+
+def cors(app):
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins, 
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "OPTIONS", "PUT","PATCH","DELETE"], 
+        allow_headers=["Authorization", "Content-Type"], 
+    )
+
 
 DB_USER = os.getenv("DB_USER")
 DB_PWD = os.getenv("DB_PWD")
