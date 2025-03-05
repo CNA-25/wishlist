@@ -53,6 +53,17 @@ Response:
     }
 ]
 
+# Get Current User's Wishlist (uses JWT token)
+- GET /wishlist/
+Response:
+
+[
+    {
+      "user_id": 2,
+      "sku": "123-ABC"
+    }
+]
+
 # Remove Product from JWT token ID Wishlist
 - DELETE /wishlist/{sku}
 
