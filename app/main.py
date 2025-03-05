@@ -112,6 +112,25 @@ async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db), user: d
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(status_code=400, detail=f"Error: {e}")
+  
+@app.get("/wishlist/")
+async def get_wishlist(db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
+    try:
+        stmt = select(Wishlist).filter(Wishlist.user_id == int(user.get("sub")))
+        result = await db.execute(stmt)
+        wishlist_items = result.scalars().all()
+        return {
+            "wishlist": [
+                {
+                    "user_id": item.user_id,
+                    "sku": item.sku
+                }
+                for item in wishlist_items
+            ]
+        }
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=400, detail=f"Error: {e}")
 
 #remove one product from the JWT logged users wishlist.
 @app.delete("/wishlist/{sku}")
