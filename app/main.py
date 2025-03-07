@@ -13,15 +13,13 @@ from jose import jwt, ExpiredSignatureError, JWTError
 import os
 load_dotenv()
 
-origins = ["https://store-frontend-git-cna-25-store-frontend.2.rahtiapp.fi/"]
-
 def cors(app):
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=origins, 
+        allow_origins=["*"], 
         allow_credentials=True,
-        allow_methods=["GET", "POST", "OPTIONS", "PUT","PATCH","DELETE"], 
-        allow_headers=["Authorization", "Content-Type"], 
+        allow_methods=["*"], 
+        allow_headers=["*"], 
     )
 
 
