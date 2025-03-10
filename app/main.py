@@ -1,5 +1,4 @@
 from fastapi import FastAPI, HTTPException, Depends, Header
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
@@ -10,8 +9,8 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 from jose import jwt, ExpiredSignatureError, JWTError
+from fastapi.middleware.cors import CORSMiddleware # for corss-origin
 import os
-
 load_dotenv()
 
 DB_USER = os.getenv("DB_USER")
@@ -24,12 +23,13 @@ SQLALCHEMY_DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PWD}@{DB_HOST}:{D
 app = FastAPI()
 Base = declarative_base()
 
+# ALLOW CROSS ORIGIN
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],  # Allow all origins for now, you can limit it to specific origins if needed
     allow_credentials=True,
-    allow_methods=["*"], 
-    allow_headers=["*"], 
+    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
 )
 
 #Auth
@@ -75,7 +75,7 @@ async def add_to_wishlist(sku: str, db: AsyncSession = Depends(get_db), user: di
     try:
         #user.get("sub") is the users id.
         new_item = Wishlist(
-            user_id=int(user.get("sub")),
+            user_id =int(user.get("sub")),
             sku=sku
         )
         db.add(new_item)
@@ -94,25 +94,6 @@ async def add_to_wishlist(sku: str, db: AsyncSession = Depends(get_db), user: di
 async def get_wishlist(user_id: int, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
         stmt = select(Wishlist).filter(Wishlist.user_id == user_id)
-        result = await db.execute(stmt)
-        wishlist_items = result.scalars().all()
-        return {
-            "wishlist": [
-                {
-                    "user_id": item.user_id,
-                    "sku": item.sku
-                }
-                for item in wishlist_items
-            ]
-        }
-    except Exception as e:
-        print(f"Error: {e}")
-        raise HTTPException(status_code=400, detail=f"Error: {e}")
-  
-@app.get("/wishlist/")
-async def get_wishlist(db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
-    try:
-        stmt = select(Wishlist).filter(Wishlist.user_id == int(user.get("sub")))
         result = await db.execute(stmt)
         wishlist_items = result.scalars().all()
         return {
