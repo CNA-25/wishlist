@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # Wishlist Service
 
 # Features
@@ -80,5 +78,4 @@ user_id INT NOT NULL,
 sku VARCHAR(50) NOT NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
->>>>>>> 171655fa63cd125d5706fd7c45083e278f64d499
 

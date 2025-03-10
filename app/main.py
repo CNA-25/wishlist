@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
@@ -8,19 +9,21 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
-from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt, ExpiredSignatureError, JWTError
 import os
+
 load_dotenv()
 
-def cors(app):
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"], 
-        allow_credentials=True,
-        allow_methods=["*"], 
-        allow_headers=["*"], 
-    )
+app = FastAPI()
+Base = declarative_base()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"], 
+)
 
 
 DB_USER = os.getenv("DB_USER")
