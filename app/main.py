@@ -73,6 +73,13 @@ class WishlistItem(BaseModel):
 @app.post("/wishlist/{sku}")
 async def add_to_wishlist(sku: str, db: AsyncSession = Depends(get_db), user: dict = Depends(verify_jwt_token)):
     try:
+        #find the specific item in the list, that Also has a matching user id
+        stmt = select(Wishlist).filter(Wishlist.user_id == int(user.get("sub")), Wishlist.sku == sku)
+        result = await db.execute(stmt)
+        wishlist_item = result.scalar_one_or_none()
+        if wishlist_item:
+            raise HTTPException(status_code=404, detail="Item already in wishlist.")
+        
         #user.get("sub") is the users id.
         new_item = Wishlist(
             user_id =int(user.get("sub")),
@@ -82,6 +89,7 @@ async def add_to_wishlist(sku: str, db: AsyncSession = Depends(get_db), user: di
         await db.commit()
         await db.refresh(new_item)
         return {"message": "Product added to wishlist successfully."}
+        
     except IntegrityError:
         await db.rollback()
         raise HTTPException(status_code=400, detail="Item already exists in the wishlist.")
